@@ -1,14 +1,16 @@
-💳 Credit Card Fraud Detection System
+# 💳 Credit Card Fraud Detection System
 
 A Machine Learning-based web application to detect fraudulent credit card transactions using the Random Forest algorithm and deployed with Streamlit.
 
+---
 
-🚀 Project Overview
+## 🚀 Project Overview
 
 This project aims to identify fraudulent transactions from credit card data by analyzing transaction patterns. It uses a trained machine learning model to classify transactions as fraudulent or legitimate.
 
+---
 
-🧠 Technologies Used
+## 🧠 Technologies Used
 
 - Python
 - Machine Learning (Random Forest)
@@ -17,15 +19,17 @@ This project aims to identify fraudulent transactions from credit card data by a
 - Streamlit (for web app)
 - Matplotlib & Seaborn (for visualization)
 
+---
 
- 📊 Dataset
+## 📊 Dataset
 
 - Source: Kaggle Credit Card Fraud Detection Dataset
 - Contains over 284,000 transactions
 - Highly imbalanced dataset (very few fraud cases)
 
+---
 
-⚙️ How It Works
+## ⚙️ How It Works
 
 1. Data preprocessing and feature scaling  
 2. Model training using Random Forest  
@@ -35,14 +39,16 @@ This project aims to identify fraudulent transactions from credit card data by a
    - Legitimate Transaction  
    - Fraudulent Transaction  
 
+---
 
- 🌐 Application Features
+## 🌐 Application Features
 
 - User-friendly web interface using Streamlit  
 - Real-time fraud detection  
 - Simulation of transaction patterns  
 - Smart logic for realistic fraud scenarios  
 
+---
 
 ## 📈 Visualizations
 
@@ -51,8 +57,9 @@ The project includes graphs for:
 - Transaction amount analysis  
 - Fraud-only and genuine-only patterns  
 
+---
 
- ▶️ How to Run the Project
+## ▶️ How to Run the Project
 
 1. Install required libraries:
 pip install pandas numpy scikit-learn streamlit matplotlib seaborn
@@ -63,33 +70,38 @@ python model.py
 3. Run the application:
 streamlit run app.py
 
+---
 
-🎯 Output
+## 🎯 Output
 
 The system predicts whether a transaction is:
 - Legitimate  
 - Fraudulent  
 
+---
 
-⚠️ Limitations
+## ⚠️ Limitations
 
 - This is a simulation-based system  
 - Real-world systems use live transaction data  
 - Features are anonymized (V1–V28)  
 
+---
 
- 🔮 Future Improvements
+## 🔮 Future Improvements
 
 - Real-time fraud detection system  
 - Deep learning models  
 - Integration with banking APIs  
 - Advanced UI dashboard  
 
+---
 
-👨‍💻 Author
+## 👨‍💻 Author
 
 Developed as a Machine Learning project for academic purposes.
 
+---
 
 ## ⭐ Conclusion
 
