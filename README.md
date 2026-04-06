@@ -35,6 +35,7 @@ This project is a machine learning-based credit card fraud detection system enha
 
 ## 📂 Project Structure
 
+```
 credit-card-fraud-detection/
 │
 ├── model.py          # Model training
@@ -45,6 +46,7 @@ credit-card-fraud-detection/
 ├── anomaly.pkl       # Anomaly detection model
 ├── creditcard.csv    # Dataset
 └── README.md
+```
 
 ---
 
@@ -119,7 +121,7 @@ Unlike basic fraud detection systems, this project:
 
 ## 👨‍💻 Author
 
-Your Name
+Deepshika Kommana
 
 ---
 
