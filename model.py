@@ -1,38 +1,49 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.ensemble import RandomForestClassifier, IsolationForest
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from imblearn.over_sampling import SMOTE
 import pickle
 
 # Load dataset
 df = pd.read_csv("creditcard.csv")
 
-# Normalize Amount
+# Scale features
 scaler = StandardScaler()
-df['Amount'] = scaler.fit_transform(df[['Amount']])
+df[['Amount','Time']] = scaler.fit_transform(df[['Amount','Time']])
 
-# Features & Target
+# Split
 X = df.drop("Class", axis=1)
 y = df["Class"]
 
-# Train-test split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
+# Handle imbalance
+sm = SMOTE(random_state=42)
+X_train_res, y_train_res = sm.fit_resample(X_train, y_train)
+
+# Train model
+model = RandomForestClassifier(n_estimators=150, random_state=42)
+model.fit(X_train_res, y_train_res)
+
+# Train anomaly model
+normal_data = X_train[y_train == 0]
+anomaly_model = IsolationForest(contamination=0.01, random_state=42)
+anomaly_model.fit(normal_data)
 
 # Evaluation
 y_pred = model.predict(X_test)
 
 print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\nClassification Report:\n")
-print(classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
-# Save model
+# Save models
 pickle.dump(model, open("model.pkl", "wb"))
+pickle.dump(scaler, open("scaler.pkl", "wb"))
+pickle.dump(anomaly_model, open("anomaly.pkl", "wb"))
 
-print("\n✅ Model trained and saved successfully!")
+print("✅ Model training complete!")

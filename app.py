@@ -1,43 +1,151 @@
 import streamlit as st
 import pickle
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Load model
+# Load models
 model = pickle.load(open("model.pkl", "rb"))
+scaler = pickle.load(open("scaler.pkl", "rb"))
+anomaly_model = pickle.load(open("anomaly.pkl", "rb"))
 
-st.title("💳 Smart Credit Card Fraud Detection")
+# Load dataset
+df = pd.read_csv("creditcard.csv")
 
-st.write("Enter transaction details:")
+# Session history
+if "history" not in st.session_state:
+    st.session_state.history = []
 
-# Inputs
-age = st.number_input("User Age", min_value=10, max_value=100, value=25)
-amount = st.number_input("Transaction Amount", value=100.0)
-time = st.number_input("Transaction Time (0–24 hrs)", min_value=0.0, max_value=24.0, value=12.0)
+st.set_page_config(page_title="Fraud Detection", layout="wide")
 
-if st.button("Check Transaction"):
+st.title("💳 Intelligent Credit Card Fraud Detection System")
 
-    # Default normal pattern
-    v_features = [0]*28
+# ---------------- INPUT ----------------
+st.sidebar.header("Transaction Input")
 
-    # 🚨 Rule 1: Minor restriction
-    if age < 18 and amount > 5000:
-        v_features = [-5]*28
+age = st.sidebar.number_input("User Age", 10, 100, 25)
+amount = st.sidebar.number_input("Transaction Amount", value=1000.0)
+time = st.sidebar.number_input("Transaction Time (0–24)", 0.0, 24.0, 12.0)
 
-    # 🚨 Rule 2: Very high amount
-    elif amount > 100000:
-        v_features = [-5]*28
+# ---------------- ANALYZE ----------------
+if st.sidebar.button("Analyze Transaction"):
 
-    # 🚨 Rule 3: Night time suspicious (12 AM – 5 AM)
-    elif time >= 0 and time <= 5 and amount > 10000:
-        v_features = [-5]*28
+    account_type = "minor" if age < 18 else "adult"
 
-    # Combine features
-    features = [time] + v_features + [amount]
+    # ---------------- BANK POLICY ----------------
+    if account_type == "minor":
+        if amount > 10000:
+            st.error("🚨 BLOCK - Minor exceeds limit")
+            st.stop()
+        elif amount > 2000:
+            st.warning("⚠️ VERIFY - Parent approval required")
+
+    if account_type == "adult":
+        if amount > 200000:
+            st.error("🚨 BLOCK - Extremely high transaction")
+            st.stop()
+        elif amount > 100000:
+            st.warning("⚠️ VERIFY - OTP required")
+
+    # ---------------- SCALE ----------------
+    scaled = scaler.transform([[amount, time]])
+    amount_scaled, time_scaled = scaled[0]
+
+    v_features = np.random.normal(0, 1, 28)
+
+    risk_score = 0
+    reasons = []
+
+    # ---------------- RULES ----------------
+    if 0 <= time <= 5:
+        risk_score += 0.2
+        reasons.append("Odd transaction time")
+
+    # ---------------- BEHAVIOR ----------------
+    if len(st.session_state.history) > 3:
+        avg = np.mean(st.session_state.history)
+        if amount > avg * 3:
+            risk_score += 0.3
+            reasons.append("Unusual spending behavior")
+
+    # ---------------- ML ----------------
+    features = [time_scaled] + list(v_features) + [amount_scaled]
     features = np.array(features).reshape(1, -1)
 
-    prediction = model.predict(features)
+    prob = model.predict_proba(features)[0][1]
 
-    if prediction[0] == 1:
-        st.error("🚨 Fraudulent Transaction Detected!")
+    # ---------------- ANOMALY ----------------
+    if anomaly_model.predict(features)[0] == -1:
+        risk_score += 0.3
+        reasons.append("Anomalous transaction")
+
+    final_score = min(prob + risk_score, 1.0)
+
+    st.session_state.history.append(amount)
+
+    # ---------------- OUTPUT ----------------
+    st.subheader(f"💳 Risk Score: {final_score:.2f}")
+
+    if final_score > 0.75:
+        st.error("🚨 BLOCK TRANSACTION")
+    elif final_score > 0.4:
+        st.warning("⚠️ VERIFY USER")
     else:
-        st.success("✅ Legitimate Transaction")
+        st.success("✅ LEGITIMATE")
+
+    # ---------------- BREAKDOWN (UNIQUE) ----------------
+    st.write("### 📊 Risk Breakdown")
+    st.write(f"ML Score: {prob:.2f}")
+    st.write(f"Rule Score: {risk_score:.2f}")
+
+    # ---------------- REASONS ----------------
+    st.write("### 🔍 Reasons")
+    if reasons:
+        for r in reasons:
+            st.write(f"- {r}")
+    else:
+        st.write("- No strong indicators")
+
+    # ---------------- USER PROFILE ----------------
+    if len(st.session_state.history) > 0:
+        avg = np.mean(st.session_state.history)
+        st.write("### 👤 User Profile")
+        st.write(f"Average Spend: ₹{avg:.2f}")
+        st.write(f"Transactions Count: {len(st.session_state.history)}")
+
+# ---------------- WHAT-IF ANALYSIS ----------------
+st.header("🔄 What-if Analysis")
+
+test_amount = st.slider("Try different amount", 0, 200000, 1000)
+
+st.write(f"If transaction = ₹{test_amount}, risk behavior may change")
+
+# ---------------- GRAPHS ----------------
+st.header("📊 Data Analysis")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    fig1, ax1 = plt.subplots()
+    sns.countplot(x='Class', data=df, ax=ax1)
+    ax1.set_xticklabels(['Genuine', 'Fraud'])
+    st.pyplot(fig1)
+
+with col2:
+    fig2, ax2 = plt.subplots()
+    sns.histplot(df[df['Class']==0]['Amount'], bins=50, ax=ax2)
+    sns.histplot(df[df['Class']==1]['Amount'], bins=50, color='red', ax=ax2)
+    st.pyplot(fig2)
+
+col3, col4 = st.columns(2)
+
+with col3:
+    fig3, ax3 = plt.subplots()
+    sns.histplot(df[df['Class']==1]['Time'], bins=50, color='red', ax=ax3)
+    st.pyplot(fig3)
+
+with col4:
+    fig4, ax4 = plt.subplots(figsize=(6,4))
+    sns.heatmap(df.corr(), cmap='coolwarm', ax=ax4)
+    st.pyplot(fig4)
