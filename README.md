@@ -1,108 +1,128 @@
-# 💳 Credit Card Fraud Detection System
+# 💳 Intelligent Credit Card Fraud Detection System
 
-A Machine Learning-based web application to detect fraudulent credit card transactions using the Random Forest algorithm and deployed with Streamlit.
-
----
-
-## 🚀 Project Overview
-
-This project aims to identify fraudulent transactions from credit card data by analyzing transaction patterns. It uses a trained machine learning model to classify transactions as fraudulent or legitimate.
+## 📌 Overview
+This project is a machine learning-based credit card fraud detection system enhanced with rule-based logic, behavioral analysis, and anomaly detection. It not only predicts fraud but also provides risk scoring, explanations, and decision support similar to real-world banking systems.
 
 ---
 
-## 🧠 Technologies Used
+## 🚀 Features
+
+- 🔍 Fraud Detection using Machine Learning (Random Forest)
+- ⚖️ Risk Scoring System (0 to 1)
+- 🏦 Bank-style Policy Rules (Minor & Transaction Limits)
+- 🧠 Behavioral Analysis (User transaction history)
+- 🚨 Anomaly Detection (Isolation Forest)
+- 📊 Data Visualization (Graphs inside app)
+- 📈 Risk Breakdown (ML vs Rules)
+- 🔄 What-if Analysis (Interactive simulation)
+- 👤 User Profile (Average spend & transaction count)
+- 🔎 Explainable Output (Reasons for decision)
+
+---
+
+## 🛠️ Technologies Used
 
 - Python
-- Machine Learning (Random Forest)
+- Streamlit
 - Scikit-learn
-- Pandas, NumPy
-- Streamlit (for web app)
-- Matplotlib & Seaborn (for visualization)
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- imbalanced-learn (SMOTE)
+
+---
+
+## 📂 Project Structure
+
+credit-card-fraud-detection/
+│
+├── model.py          # Model training
+├── app.py            # Streamlit application
+├── graphs.py         # Data analysis (optional)
+├── model.pkl         # Trained ML model
+├── scaler.pkl        # Feature scaler
+├── anomaly.pkl       # Anomaly detection model
+├── creditcard.csv    # Dataset
+└── README.md
+
+---
+
+## ⚙️ How to Run
+
+### 1️⃣ Install dependencies
+pip install pandas numpy scikit-learn streamlit seaborn matplotlib imbalanced-learn
+
+### 2️⃣ Train the model
+python model.py
+
+### 3️⃣ Run the app
+streamlit run app.py
 
 ---
 
 ## 📊 Dataset
 
 - Source: Kaggle Credit Card Fraud Detection Dataset
-- Contains over 284,000 transactions
-- Highly imbalanced dataset (very few fraud cases)
+- Contains anonymized features (V1–V28), Time, Amount, and Class
+- Class:
+  - 0 → Genuine transaction
+  - 1 → Fraudulent transaction
 
 ---
 
-## ⚙️ How It Works
+## 🧠 How It Works
 
-1. Data preprocessing and feature scaling  
-2. Model training using Random Forest  
-3. User inputs transaction details  
-4. System generates transaction features  
-5. Model predicts:
-   - Legitimate Transaction  
-   - Fraudulent Transaction  
-
----
-
-## 🌐 Application Features
-
-- User-friendly web interface using Streamlit  
-- Real-time fraud detection  
-- Simulation of transaction patterns  
-- Smart logic for realistic fraud scenarios  
-
----
-
-## 📈 Visualizations
-
-The project includes graphs for:
-- Fraud vs Genuine transaction distribution  
-- Transaction amount analysis  
-- Fraud-only and genuine-only patterns  
-
----
-
-## ▶️ How to Run the Project
-
-1. Install required libraries:
-pip install pandas numpy scikit-learn streamlit matplotlib seaborn
-
-2. Train the model:
-python model.py
-
-3. Run the application:
-streamlit run app.py
+1. Applies bank policy rules (limits, minor restrictions)
+2. Tracks user transaction behavior
+3. Uses machine learning to predict fraud probability
+4. Detects anomalies using Isolation Forest
+5. Combines all signals into a final risk score
+6. Generates decision:
+   - ✅ Allow
+   - ⚠️ Verify
+   - 🚨 Block
+7. Provides explanation and insights
 
 ---
 
 ## 🎯 Output
 
-The system predicts whether a transaction is:
-- Legitimate  
-- Fraudulent  
+- 💳 Risk Score (0–1)
+- 📌 Decision (Allow / Verify / Block)
+- 🔍 Reasons for decision
+- 👤 User profile (average spend & history)
+- 🔄 What-if analysis for testing scenarios
 
 ---
 
-## ⚠️ Limitations
+## 💡 Key Innovation
 
-- This is a simulation-based system  
-- Real-world systems use live transaction data  
-- Features are anonymized (V1–V28)  
+Unlike basic fraud detection systems, this project:
+
+- Combines ML + rules + behavior + anomaly detection
+- Provides transparent explanations (Explainable AI)
+- Includes interactive "What-if" simulation
+- Shows user risk profile
+- Mimics real-world banking decision systems
 
 ---
 
-## 🔮 Future Improvements
+## 📌 Future Improvements
 
-- Real-time fraud detection system  
-- Deep learning models  
-- Integration with banking APIs  
-- Advanced UI dashboard  
+- Real-time transaction processing
+- Cloud deployment (AWS / Azure)
+- Mobile app integration
+- User authentication system
 
 ---
 
 ## 👨‍💻 Author
 
-Developed as a Machine Learning project for academic purposes.
+Your Name
 
 ---
 
 ## ⭐ Conclusion
 
-This project demonstrates how machine learning can be applied to detect financial fraud and highlights the challenges of working with imbalanced datasets.
+This project demonstrates a complete fraud detection pipeline that not only predicts fraud but also explains decisions, making it closer to real-world intelligent financial systems.
