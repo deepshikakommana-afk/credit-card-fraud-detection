@@ -57,10 +57,16 @@ if st.sidebar.button("Analyze Transaction"):
     risk_score = 0
     reasons = []
 
-    # ---------------- RULES ----------------
+    # ---------------- TIME RULE (UPDATED) ----------------
     if 0 <= time <= 5:
-        risk_score += 0.2
-        reasons.append("Odd transaction time")
+        risk_score += 0.3
+        reasons.append("High-risk night transaction")
+
+        if amount > 10000:
+            st.error("🚨 BLOCK - High transaction at night")
+            st.stop()
+        else:
+            st.warning("⚠️ VERIFY - Night time transaction")
 
     # ---------------- BEHAVIOR ----------------
     if len(st.session_state.history) > 3:
@@ -89,12 +95,12 @@ if st.sidebar.button("Analyze Transaction"):
 
     if final_score > 0.75:
         st.error("🚨 BLOCK TRANSACTION")
-    elif final_score > 0.4:
+    elif final_score > 0.25:
         st.warning("⚠️ VERIFY USER")
     else:
         st.success("✅ LEGITIMATE")
 
-    # ---------------- BREAKDOWN (UNIQUE) ----------------
+    # ---------------- BREAKDOWN ----------------
     st.write("### 📊 Risk Breakdown")
     st.write(f"ML Score: {prob:.2f}")
     st.write(f"Rule Score: {risk_score:.2f}")
